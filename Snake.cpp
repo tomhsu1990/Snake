@@ -10,6 +10,7 @@
 
 class Snake {
 public:
+	using Location = std::string;
 	Snake () {W=H=0;}
 	Snake (int w, int h):W(w), H(h) {}
 
@@ -27,14 +28,14 @@ public:
 
 	// randomly pick an index from 0~size-1
 	int get_random (int size) {
-        uniform_int_distribution<int> distribution(0, size-1);
+        std::uniform_int_distribution<int> distribution(0, size-1);
         return distribution(gen);
     }
 
 	int W, H;
 	std::default_random_engine gen;
-	std::unordered_map<string, int> map_index;
-	std::unordered_map<int, string> map_location;
+	std::unordered_map<Location, int> map_index;
+	std::unordered_map<int, Location> map_location;
 };
 
 int main (int argc, char *argv[]) {
