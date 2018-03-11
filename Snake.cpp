@@ -79,8 +79,8 @@ public:
 		for (int h=0;h<H;++h)
 			for (int w=0;w<W;++w) {
 				Location loc(std::to_string(h)+","+std::to_string(w)+",");
-				map_index[loc] = h*H+w;
-				map_location[h*H+w] = loc;
+				map_index[loc] = h*W+w;
+				map_location[h*W+w] = loc;
 			}
 
 		// starting location
@@ -173,8 +173,16 @@ public:
 Snake *snake;
 
 void keyboard_listener () {
+	char new_cmd(cmd);
 	while (!terminate) {
-		cmd = getch();
+		new_cmd = getche();
+		if (cmd == 'w' && (new_cmd == 'a' || new_cmd == 'd')) cmd = new_cmd;
+		if (cmd == 's' && (new_cmd == 'a' || new_cmd == 'd')) cmd = new_cmd;
+		if (cmd == 'a' && (new_cmd == 'w' || new_cmd == 's')) cmd = new_cmd;
+		if (cmd == 'd' && (new_cmd == 'w' || new_cmd == 's')) cmd = new_cmd;
+		if ((cmd != 'w' && cmd != 's' && cmd != 'a' && cmd != 'd') && 
+		    (new_cmd == 'w' || new_cmd == 's' || new_cmd == 'a' || new_cmd == 'd'))
+		    cmd = new_cmd;
 		if (cmd == 'q') terminate = true;
 	}
 }
@@ -187,7 +195,6 @@ void run_game () {
 	if (!robot) cmd = getchar();
 	while (snake->map_index.size() > 0) {
 		snake->show();
-
 		if (robot) {
 			snake->next_location();
 		}
