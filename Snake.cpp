@@ -6,11 +6,13 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <queue>
 #include <deque>
 #include <unordered_set>
 #include <unordered_map>
 #include <random>
 #include <thread>
+#include <cfloat>
 
 bool terminate(false), robot(false);
 char cmd;
@@ -99,8 +101,25 @@ public:
 		assignNewBiscuit();
 	}
 
-	void bfs () {
+	void next_location () {
+		char c[5] = "wads";
+		int dx[4] = {-1,0,0,1};
+		int dy[4] = {0,-1,1,0};
+		int f(0), dist(INT_MAX);
+		std::vector<int> loc = parseLocation(biscuit);
+		for (int i=0;i<4;++i) {
+			int tx(head.front().first+dx[i]);
+			int ty(head.front().second+dy[i]);
+			if (tx < 0 || tx >= H || ty < 0 || ty >= W) continue;
+			if (body.find(std::to_string(tx)+","+std::to_string(ty)+",") != body.end()) continue;
 
+			int dist_(abs(tx-loc[0])+abs(ty-loc[1]));
+			if (dist_ < dist) {
+				dist = dist_;
+				f = i;
+			}
+		}
+		cmd = c[f];
 	}
 
 	void show () {
@@ -156,8 +175,7 @@ Snake *snake;
 void keyboard_listener () {
 	while (!terminate) {
 		cmd = getch();
-		if (cmd == 'q')
-			terminate = true;
+		if (cmd == 'q') terminate = true;
 	}
 }
 
@@ -171,7 +189,7 @@ void run_game () {
 		snake->show();
 
 		if (robot) {
-			snake->bfs();
+			snake->next_location();
 		}
 
 		int nx(snake->head.front().first+dir[cmd].first);
@@ -232,13 +250,15 @@ void run_game () {
 int main (int argc, char *argv[]) {
 
 	int w, h;
-	if (argc == 1) w = h = 10;
-	else if (argc == 2) w = h = atoi(argv[1]);
-	else if (argc == 3) {
+	if (argc >= 1) w = h = 10;
+	if (argc >= 2) w = h = atoi(argv[1]);
+	if (argc >= 3) {
 		w = atoi(argv[1]);
 		h = atoi(argv[2]);
 	}
-	else if (atoi(argv[3]) > 0) robot = true;
+	if (argc >= 4 && atoi(argv[3]) > 0) {
+		terminate = robot = true;
+	}
 
 	snake = new Snake(w, h);
 	snake->initial();
@@ -247,7 +267,7 @@ int main (int argc, char *argv[]) {
 	//Launch a snake thread
 	std::thread game_thread(run_game);
 	//Join the thread with the main thread
-	if (!robot) keyboard_thread.join();
+	keyboard_thread.join();
 	game_thread.join();
 	std::cout << "Final Snake length: " << snake->report_length () << std::endl;
 	delete snake;
