@@ -101,6 +101,7 @@ public:
 		assignNewBiscuit();
 	}
 
+	// robot mode can be improved by doing bfs check!!!
 	void next_location () {
 		char c[5] = "wads";
 		int dx[4] = {-1,0,0,1};
