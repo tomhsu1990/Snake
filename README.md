@@ -11,7 +11,7 @@ How to achieve constant biscuit location update is based on two unordered_map: m
 ## Discussion
 When implementing this small command line game, the most tricky part is to program a keyboard handler. The way I solve it is via multi-thread. One thread is for running the game. The other thread is for listening the keyboard command. One more step is to have the getchar function working without hitting the enter. This problem is solved via termios.
 
-## How to run: (MacOS)
+## How to run (MacOS)
 g++ -std=c++11 -pthread Snake.cpp
 
 ./a.out map_height map_width
